@@ -1,127 +1,13 @@
+<!-- Alias pointing to index.html with identical application logic -->
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Image Metadata Cleaner — Batch</title>
-<style>
-*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#0f1115;color:#eee}.wrap{max-width:1000px;margin:30px auto;padding:18px}.box{background:#191c22;border:1px solid #343943;border-radius:16px;padding:24px;box-shadow:0 12px 35px #0005}.drop{display:block;border:2px dashed #666;border-radius:14px;padding:38px 20px;text-align:center;cursor:pointer;background:#14171c}.drop:hover{border-color:#aaa}.drop strong{font-size:20px}.small{color:#aeb4bf;font-size:13px;line-height:1.5}.hidden{display:none!important}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.btn{padding:12px 17px;border:0;border-radius:9px;cursor:pointer;font-weight:700}.primary{background:#fff;color:#111}.secondary{background:#303641;color:#fff}.danger{background:#5a2525;color:#fff}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.stat{background:#12151a;border:1px solid #30343c;border-radius:10px;padding:10px 14px}.list{margin-top:12px}.item{display:flex;align-items:center;gap:12px;background:#12151a;border:1px solid #30343c;border-radius:10px;padding:10px;margin:8px 0}.thumb{width:58px;height:58px;object-fit:cover;border-radius:7px;background:#252a32}.name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.status{font-size:13px;color:#aeb4bf}.ok{color:#8ee28e}.bad{color:#ff8989}.progress{height:8px;background:#30343c;border-radius:99px;overflow:hidden;margin-top:12px}.bar{height:100%;width:0;background:#eee;transition:width .2s}.note{margin-top:18px;padding:12px;background:#111318;border:1px solid #2f343d;border-radius:9px}
-</style>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url=index.html">
+  <title>MetaClean — Redirecting to App</title>
+  <script>window.location.href = "index.html";</script>
 </head>
-<body>
-<div class="wrap"><div class="box">
-<h1>🧹 Image Metadata Cleaner</h1>
-<p class="small">Batch clean images locally in your browser. The original files are never modified or uploaded.</p>
-<label class="drop" for="files"><strong>📤 Select Multiple Images</strong><br><span class="small">JPG / JPEG / PNG / WebP — select as many as your browser can handle</span></label>
-<input id="files" type="file" accept="image/jpeg,image/png,image/webp,image/*" multiple class="hidden">
-
-<div id="workspace" class="hidden">
-<div class="stats"><div class="stat">Selected: <b id="selected">0</b></div><div class="stat">Cleaned: <b id="cleaned">0</b></div><div class="stat">Failed: <b id="failed">0</b></div></div>
-<div class="toolbar"><button id="cleanBtn" class="btn primary">🧹 Clean All</button><button id="zipBtn" class="btn secondary" disabled>📦 Download All as ZIP</button><button id="clearBtn" class="btn danger">✕ Clear</button></div>
-<div class="progress"><div id="bar" class="bar"></div></div>
-<div id="info" class="small" style="margin-top:8px">Ready.</div>
-<div id="list" class="list"></div>
-<div class="note small">Cleaning works by decoding each image and re-encoding it through a canvas. This removes common EXIF/text metadata from the exported image. It is not a forensic guarantee for every proprietary metadata format.</div>
-</div></div></div>
-
-<script>
-'use strict';
-const $=id=>document.getElementById(id);
-let files=[], results=[];
-
-$('files').addEventListener('change',e=>{
-  files=Array.from(e.target.files||[]).filter(f=>/^image\/(jpeg|png|webp)$/i.test(f.type)||/\.(jpe?g|png|webp)$/i.test(f.name));
-  results=[]; render();
-});
-$('clearBtn').addEventListener('click',()=>{files=[];results=[];$('files').value='';render()});
-$('cleanBtn').addEventListener('click',cleanAll);
-$('zipBtn').addEventListener('click',downloadZip);
-
-function render(){
-  $('workspace').classList.toggle('hidden',files.length===0);
-  $('selected').textContent=files.length;$('cleaned').textContent=results.filter(x=>x.ok).length;$('failed').textContent=results.filter(x=>!x.ok).length;
-  $('zipBtn').disabled=!results.some(x=>x.ok);$('bar').style.width='0%';
-  $('info').textContent=files.length?files.length+' image(s) selected. Click Clean All.':'Ready.';
-  const list=$('list');list.innerHTML='';
-  files.forEach((f,i)=>{
-    const item=document.createElement('div');item.className='item';
-    const img=document.createElement('img');img.className='thumb';img.alt='';img.src=URL.createObjectURL(f);img.onload=()=>URL.revokeObjectURL(img.src);
-    const name=document.createElement('div');name.className='name';name.title=f.name;name.textContent=f.name;
-    const st=document.createElement('div');st.className='status';st.id='st'+i;st.textContent='Waiting';
-    item.append(img,name,st);list.appendChild(item);
-  });
-}
-
-function outputType(file){
-  if(file.type==='image/png'||/\.png$/i.test(file.name))return 'image/png';
-  if(file.type==='image/webp'||/\.webp$/i.test(file.name))return 'image/webp';
-  return 'image/jpeg';
-}
-function outputName(name,type){
-  const base=name.replace(/\.[^.]+$/,'');
-  const ext=type==='image/png'?'png':type==='image/webp'?'webp':'jpg';
-  return base+'_clean.'+ext;
-}
-function loadImage(file){
-  return new Promise((resolve,reject)=>{
-    const url=URL.createObjectURL(file),img=new Image();
-    img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
-    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Image could not be decoded'))};
-    img.src=url;
-  });
-}
-function cleanOne(file){
-  return new Promise(async(resolve,reject)=>{
-    try{
-      const img=await loadImage(file),c=document.createElement('canvas');
-      c.width=img.naturalWidth;c.height=img.naturalHeight;
-      const ctx=c.getContext('2d',{alpha:true});
-      if(!ctx)throw new Error('Canvas unavailable');
-      ctx.drawImage(img,0,0);
-      const type=outputType(file),quality=type==='image/png'?undefined:.95;
-      c.toBlob(b=>b?resolve({blob:b,type,name:outputName(file.name,type)}):reject(new Error('Export failed')),type,quality);
-    }catch(e){reject(e)}
-  });
-}
-async function cleanAll(){
-  if(!files.length)return;
-  results=[];$('cleanBtn').disabled=true;$('zipBtn').disabled=true;$('clearBtn').disabled=true;
-  let done=0;
-  for(let i=0;i<files.length;i++){
-    const st=$('st'+i);st.textContent='Cleaning…';st.className='status';
-    try{const r=await cleanOne(files[i]);results[i]={ok:true,...r};st.textContent='✓ Cleaned';st.className='status ok';}
-    catch(e){results[i]={ok:false,error:e.message};st.textContent='✗ Failed';st.className='status bad';}
-    done++;$('bar').style.width=(done/files.length*100)+'%';
-    $('cleaned').textContent=results.filter(x=>x&&x.ok).length;$('failed').textContent=results.filter(x=>x&&!x.ok).length;
-    $('info').textContent=`Processed ${done} of ${files.length}`;
-  }
-  $('cleanBtn').disabled=false;$('clearBtn').disabled=false;$('zipBtn').disabled=!results.some(x=>x&&x.ok);
-  $('info').textContent=`Done — ${results.filter(x=>x&&x.ok).length} cleaned, ${results.filter(x=>x&&!x.ok).length} failed.`;
-}
-
-// Minimal ZIP writer (STORE method), no external libraries and works offline.
-const crcTable=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);t[n]=c>>>0}return t})();
-function crc32(bytes){let c=0xffffffff;for(let i=0;i<bytes.length;i++)c=crcTable[(c^bytes[i])&255]^(c>>>8);return (c^0xffffffff)>>>0}
-function u16(a,p,v){a[p]=v&255;a[p+1]=(v>>>8)&255}
-function u32(a,p,v){a[p]=v&255;a[p+1]=(v>>>8)&255;a[p+2]=(v>>>16)&255;a[p+3]=(v>>>24)&255}
-function concat(parts){let n=parts.reduce((s,a)=>s+a.length,0),out=new Uint8Array(n),p=0;for(const a of parts){out.set(a,p);p+=a.length}return out}
-function dosTimeDate(){const d=new Date();return {time:(d.getHours()<<11)|(d.getMinutes()<<5)|Math.floor(d.getSeconds()/2),date:((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate()}}
-async function makeZip(items){
-  const enc=new TextEncoder(),local=[],central=[];let offset=0;const td=dosTimeDate();
-  for(const item of items){
-    const data=new Uint8Array(await item.blob.arrayBuffer()),name=enc.encode(item.name),crc=crc32(data);
-    const lh=new Uint8Array(30+name.length);u32(lh,0,0x04034b50);u16(lh,4,20);u16(lh,6,0);u16(lh,8,0);u16(lh,10,td.time);u16(lh,12,td.date);u32(lh,14,crc);u32(lh,18,data.length);u32(lh,22,data.length);u16(lh,26,name.length);u16(lh,28,0);lh.set(name,30);local.push(lh,data);
-    const ch=new Uint8Array(46+name.length);u32(ch,0,0x02014b50);u16(ch,4,20);u16(ch,6,20);u16(ch,8,0);u16(ch,10,0);u16(ch,12,td.time);u16(ch,14,td.date);u32(ch,16,crc);u32(ch,20,data.length);u32(ch,24,data.length);u16(ch,28,name.length);u16(ch,30,0);u16(ch,32,0);u16(ch,34,0);u16(ch,36,0);u32(ch,38,0);u32(ch,42,offset);ch.set(name,46);central.push(ch);offset+=lh.length+data.length;
-  }
-  const cd=concat(central),body=concat(local),end=new Uint8Array(22);u32(end,0,0x06054b50);u16(end,4,0);u16(end,6,0);u16(end,8,items.length);u16(end,10,items.length);u32(end,12,cd.length);u32(end,16,body.length);u16(end,20,0);
-  return new Blob([body,cd,end],{type:'application/zip'});
-}
-async function downloadZip(){
-  const good=results.filter(x=>x&&x.ok);if(!good.length)return;
-  $('zipBtn').disabled=true;$('info').textContent='Creating ZIP…';
-  try{const zip=await makeZip(good);const url=URL.createObjectURL(zip),a=document.createElement('a');a.href=url;a.download='cleaned_images.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);$('info').textContent=good.length+' clean image(s) downloaded as ZIP.';}
-  catch(e){$('info').textContent='ZIP creation failed: '+e.message}
-  $('zipBtn').disabled=false;
-}
-render();
-</script>
-</body></html>
+<body style="background:#080a0f; color:#fff; font-family:sans-serif; text-align:center; padding-top:50px;">
+  <p>Loading MetaClean App... If not redirected, <a href="index.html" style="color:#818cf8;">click here to open index.html</a>.</p>
+</body>
+</html>

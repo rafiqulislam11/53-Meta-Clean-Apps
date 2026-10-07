@@ -1,0 +1,1492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MetaClean — Batch Image Metadata & EXIF Scrubber</title>
+  <meta name="description" content="Clean EXIF metadata, GPS location, device tags, and personal data from multiple images directly in your browser. 100% private, zero uploads.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #080a0f;
+      --bg-card: rgba(18, 22, 33, 0.75);
+      --bg-card-hover: rgba(26, 32, 48, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand-badge span.pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #818cf8;
+      box-shadow: 0 0 10px #818cf8;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 70%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      max-width: 650px;
+      margin: 0 auto 24px;
+    }
+
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .trust-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      padding: 5px 12px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .trust-pill svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent-emerald);
+    }
+
+    /* Main Box */
+    .app-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(14, 18, 27, 0.5);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dropzone:hover, .dropzone.drag-active {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.06);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px var(--primary-glow);
+    }
+
+    .dropzone.drag-active {
+      border-style: solid;
+    }
+
+    .drop-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      color: #818cf8;
+      transition: var(--transition);
+    }
+
+    .dropzone:hover .drop-icon-wrap {
+      transform: scale(1.08);
+      background: rgba(99, 102, 241, 0.18);
+      color: #c7d2fe;
+    }
+
+    .drop-icon-wrap svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .drop-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .drop-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 450px;
+      margin-bottom: 20px;
+    }
+
+    .drop-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-select {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 10px 22px;
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-select:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    }
+
+    .btn-sample {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      font-size: 0.88rem;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-sample:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .drop-paste-hint {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .drop-paste-hint kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: inherit;
+      color: #cbd5e1;
+    }
+
+    /* Options Panel */
+    .settings-panel {
+      margin-top: 24px;
+      background: rgba(14, 18, 27, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .settings-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .setting-item label {
+      font-weight: 500;
+    }
+
+    select, input[type="range"] {
+      background: #1e2433;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    select:focus {
+      border-color: var(--primary);
+    }
+
+    .quality-display {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: #818cf8;
+      min-width: 36px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 26px 0;
+    }
+
+    .stat-card {
+      background: rgba(14, 18, 27, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, #6366f1), transparent);
+      opacity: 0.6;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .stat-val {
+      font-size: 1.7rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .stat-sub {
+      font-size: 0.8rem;
+      font-weight: normal;
+      color: var(--text-muted);
+    }
+
+    /* Progress Bar */
+    .progress-box {
+      margin: 18px 0;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-track {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 9999px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6366f1, #06b6d4, #10b981);
+      border-radius: 9999px;
+      transition: width 0.3s ease;
+      position: relative;
+    }
+
+    .progress-fill.active::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Toolbar Actions */
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-clean {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+    .btn-clean:hover:not(:disabled) {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-zip {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    }
+    .btn-zip:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-clear {
+      background: rgba(244, 63, 94, 0.12);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+    .btn-clear:hover:not(:disabled) {
+      background: rgba(244, 63, 94, 0.22);
+      color: #fff;
+    }
+
+    .btn-addmore {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+    .btn-addmore:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* Image List */
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .items-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .items-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 99px;
+    }
+
+    .image-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(14, 18, 27, 0.55);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      transition: var(--transition);
+    }
+
+    .image-item:hover {
+      background: rgba(20, 25, 38, 0.7);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .image-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #181d29;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .image-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .image-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .image-meta-info {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 3px;
+    }
+
+    .meta-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .meta-exif-warning {
+      color: #fbbf24;
+      font-weight: 500;
+    }
+
+    .meta-exif-clean {
+      color: #34d399;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-waiting {
+      background: rgba(148, 163, 184, 0.1);
+      color: #94a3b8;
+    }
+
+    .status-cleaning {
+      background: rgba(99, 102, 241, 0.18);
+      color: #a5b4fc;
+      animation: pulse 1.5s infinite;
+    }
+
+    .status-done {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-error {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .btn-icon.download-one {
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+    .btn-icon.download-one:hover {
+      background: rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-icon.remove-one:hover {
+      color: #fb7185;
+      background: rgba(244, 63, 94, 0.15);
+    }
+
+    /* Explanation & FAQ Section */
+    .info-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .info-card {
+      background: rgba(18, 22, 33, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+
+    .info-card h3 {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: #818cf8;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Utility */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      background: #1e2433;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="brand-badge">
+        <span class="pulse-dot"></span>
+        MetaClean • RI Creative Agency
+      </div>
+      <h1>Batch Image Metadata Cleaner</h1>
+      <p class="subtitle">Strip EXIF, GPS location coordinates, camera models, and hidden trackers from your images. 100% in-browser processing with zero server uploads.</p>
+
+      <div class="trust-badges">
+        <div class="trust-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          100% Private (Runs Locally)
+        </div>
+        <div class="trust-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Instant Canvas Sanitization
+        </div>
+        <div class="trust-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          Batch ZIP Export
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Card -->
+    <div class="app-card">
+      <!-- Hidden file input -->
+      <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/*" multiple class="hidden">
+
+      <!-- Dropzone -->
+      <div class="dropzone" id="dropzone">
+        <div class="drop-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
+        <div class="drop-title">Drag & Drop Images Here</div>
+        <div class="drop-desc">Supports JPEG, JPG, PNG, and WebP. Select single or bulk image batches.</div>
+        <div class="drop-actions">
+          <button class="btn-select" id="btnBrowse" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Select Images
+          </button>
+          <button class="btn-sample" id="btnSample" type="button">⚡ Try Demo Images</button>
+        </div>
+        <div class="drop-paste-hint">Or paste directly with <kbd>Ctrl</kbd> + <kbd>V</kbd></div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="settings-panel">
+        <div class="settings-group">
+          <div class="setting-item">
+            <label for="formatSelect">Output Format:</label>
+            <select id="formatSelect">
+              <option value="original" selected>Preserve Original (JPG/PNG/WebP)</option>
+              <option value="image/jpeg">Convert to JPEG</option>
+              <option value="image/png">Convert to PNG (Lossless)</option>
+              <option value="image/webp">Convert to WebP (Modern & Compact)</option>
+            </select>
+          </div>
+
+          <div class="setting-item" id="qualityWrapper">
+            <label for="qualityRange">Quality:</label>
+            <input type="range" id="qualityRange" min="70" max="100" value="95" step="1">
+            <span class="quality-display" id="qualityVal">95%</span>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="setting-item">
+            <label for="suffixInput">Filename Suffix:</label>
+            <select id="suffixInput">
+              <option value="_clean" selected>_clean</option>
+              <option value="_sanitized">_sanitized</option>
+              <option value="_metafree">_metafree</option>
+              <option value="">None (Keep same name)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workspace Section (visible once files are selected) -->
+      <div id="workspace" class="hidden">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card" style="--card-accent: #6366f1;">
+            <div class="stat-label">Total Selected</div>
+            <div class="stat-val"><span id="statSelected">0</span> <span class="stat-sub">files</span></div>
+          </div>
+          <div class="stat-card" style="--card-accent: #10b981;">
+            <div class="stat-label">Cleaned Ready</div>
+            <div class="stat-val"><span id="statCleaned">0</span> <span class="stat-sub">ready</span></div>
+          </div>
+          <div class="stat-card" style="--card-accent: #06b6d4;">
+            <div class="stat-label">Data Scrubbed</div>
+            <div class="stat-val"><span id="statMetadataCount">0</span> <span class="stat-sub">tags</span></div>
+          </div>
+          <div class="stat-card" style="--card-accent: #f59e0b;">
+            <div class="stat-label">Size Saved</div>
+            <div class="stat-val"><span id="statSavedBytes">0 KB</span></div>
+          </div>
+        </div>
+
+        <!-- Progress Header & Bar -->
+        <div class="progress-box">
+          <div class="progress-header">
+            <span id="progressText">Ready to sanitize files</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressBar"></div>
+          </div>
+        </div>
+
+        <!-- Action Toolbar -->
+        <div class="toolbar">
+          <button class="btn btn-clean" id="btnCleanAll">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Clean All Images
+          </button>
+          <button class="btn btn-zip" id="btnDownloadZip" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            Download All (ZIP)
+          </button>
+          <button class="btn btn-clear" id="btnClearAll">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Clear List
+          </button>
+          <button class="btn btn-addmore" id="btnAddMore">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add More
+          </button>
+        </div>
+
+        <!-- Files List -->
+        <div class="items-list" id="itemsList"></div>
+      </div>
+    </div>
+
+    <!-- Explanatory Information -->
+    <div class="info-section">
+      <div class="info-card">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          What Gets Removed?
+        </h3>
+        <p>EXIF tags, GPS latitude & longitude coordinates, device serial numbers, camera model details, lens presets, software history, timestamps, thumbnail caches, and IPTC/XMP profiles.</p>
+      </div>
+
+      <div class="info-card">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Zero Server Privacy
+        </h3>
+        <p>Your photos are decoded directly inside your web browser’s GPU Canvas engine and re-encoded in client memory. Not a single pixel or metadata header leaves your machine.</p>
+      </div>
+
+      <div class="info-card">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Universal Compatibility
+        </h3>
+        <p>Cleans photographs taken on iPhones, Android smartphones, DSLR cameras (Canon, Nikon, Sony), and downloaded web imagery before uploading to social networks or marketplaces.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      MetaClean Web Studio • Developed with Clean Canvas Pipeline • 100% Client-Side Free Utility
+    </footer>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    'use strict';
+
+    // UI Helpers
+    const $ = id => document.getElementById(id);
+    const fileInput = $('fileInput');
+    const dropzone = $('dropzone');
+    const workspace = $('workspace');
+    const itemsList = $('itemsList');
+    const formatSelect = $('formatSelect');
+    const qualityRange = $('qualityRange');
+    const qualityVal = $('qualityVal');
+    const suffixInput = $('suffixInput');
+
+    let fileItems = []; // Array of { id, file, rawMeta, resultBlob, resultName, resultSize, status: 'waiting'|'cleaning'|'done'|'error', errorMsg }
+
+    // Format file sizes nicely
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 B';
+      const k = 1024, dm = 1;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    // Toast notification
+    function showToast(msg, duration = 3000) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<span>ℹ️</span> <div>${msg}</div>`;
+      $('toastContainer').appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('show'));
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    // Quality slider sync
+    qualityRange.addEventListener('input', e => {
+      qualityVal.textContent = e.target.value + '%';
+    });
+
+    // Detect basic EXIF presence from ArrayBuffer
+    async function inspectImageMetadata(file) {
+      const meta = { hasExif: false, tags: [], summary: 'Standard image' };
+      try {
+        const slice = await file.slice(0, 131072).arrayBuffer();
+        const view = new DataView(slice);
+        
+        // JPEG check
+        if (view.getUint16(0) === 0xFFD8) {
+          let offset = 2;
+          while (offset < view.byteLength - 4) {
+            const marker = view.getUint16(offset);
+            if (marker === 0xFFE1) { // APP1 (EXIF or XMP)
+              meta.hasExif = true;
+              const len = view.getUint16(offset + 2);
+              // Check for Exif string
+              const exifHeader = String.fromCharCode(
+                view.getUint8(offset + 4),
+                view.getUint8(offset + 5),
+                view.getUint8(offset + 6),
+                view.getUint8(offset + 7)
+              );
+              if (exifHeader === 'Exif') {
+                meta.tags.push('EXIF Header', 'Device / Camera metadata');
+              } else {
+                meta.tags.push('XMP / Color Profile');
+              }
+              break;
+            } else if ((marker & 0xFF00) !== 0xFF00 || marker === 0xFFDA) {
+              break;
+            }
+            offset += 2 + view.getUint16(offset + 2);
+          }
+        } else if (file.type === 'image/png' || /\.png$/i.test(file.name)) {
+          // Check for PNG text chunks (tEXt, zTXt, iTXt, eXIf)
+          const text = new TextDecoder().decode(new Uint8Array(slice));
+          if (/tEXt|zTXt|iTXt|eXIf/i.test(text)) {
+            meta.hasExif = true;
+            meta.tags.push('PNG Text Chunks', 'Software metadata');
+          }
+        }
+      } catch (err) {
+        // silent fail on inspect
+      }
+      return meta;
+    }
+
+    // Add files to list
+    async function addFiles(newFiles) {
+      const valid = Array.from(newFiles).filter(f => 
+        /^image\/(jpeg|png|webp|avif)$/i.test(f.type) || /\.(jpe?g|png|webp|avif)$/i.test(f.name)
+      );
+
+      if (!valid.length) {
+        showToast('Please select valid images (JPG, PNG, WebP).');
+        return;
+      }
+
+      for (const file of valid) {
+        const id = 'img_' + Math.random().toString(36).substring(2, 9);
+        const meta = await inspectImageMetadata(file);
+        fileItems.push({
+          id,
+          file,
+          rawMeta: meta,
+          resultBlob: null,
+          resultName: null,
+          resultSize: 0,
+          status: 'waiting',
+          errorMsg: null
+        });
+      }
+
+      renderUI();
+      showToast(`Added ${valid.length} image${valid.length > 1 ? 's' : ''}`);
+    }
+
+    // Render workspace
+    function renderUI() {
+      const hasFiles = fileItems.length > 0;
+      workspace.classList.toggle('hidden', !hasFiles);
+
+      const cleanedCount = fileItems.filter(x => x.status === 'done').length;
+      const metadataFoundCount = fileItems.filter(x => x.rawMeta && x.rawMeta.hasExif).length;
+      
+      let totalSaved = 0;
+      fileItems.forEach(x => {
+        if (x.status === 'done' && x.resultSize) {
+          const delta = x.file.size - x.resultSize;
+          if (delta > 0) totalSaved += delta;
+        }
+      });
+
+      $('statSelected').textContent = fileItems.length;
+      $('statCleaned').textContent = cleanedCount;
+      $('statMetadataCount').textContent = metadataFoundCount;
+      $('statSavedBytes').textContent = formatBytes(totalSaved);
+
+      $('btnDownloadZip').disabled = cleanedCount === 0;
+
+      // Render Item DOM elements
+      itemsList.innerHTML = '';
+      fileItems.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'image-item';
+        div.id = 'item_' + item.id;
+
+        const thumbUrl = URL.createObjectURL(item.file);
+        
+        let statusBadgeHtml = '';
+        if (item.status === 'waiting') {
+          statusBadgeHtml = `<span class="status-badge status-waiting">⏳ Waiting</span>`;
+        } else if (item.status === 'cleaning') {
+          statusBadgeHtml = `<span class="status-badge status-cleaning">✨ Cleaning...</span>`;
+        } else if (item.status === 'done') {
+          statusBadgeHtml = `<span class="status-badge status-done">✓ Cleaned</span>`;
+        } else {
+          statusBadgeHtml = `<span class="status-badge status-error" title="${item.errorMsg || 'Failed'}">✕ Failed</span>`;
+        }
+
+        let metaNotice = '';
+        if (item.rawMeta && item.rawMeta.hasExif) {
+          metaNotice = `<span class="meta-tag meta-exif-warning">⚠️ Metadata Detected</span>`;
+        } else {
+          metaNotice = `<span class="meta-tag" style="color:var(--text-dim);">No EXIF header found</span>`;
+        }
+
+        let resultSizeHtml = '';
+        if (item.status === 'done') {
+          resultSizeHtml = `<span class="meta-tag meta-exif-clean">Clean Size: ${formatBytes(item.resultSize)}</span>`;
+        }
+
+        div.innerHTML = `
+          <img class="image-thumb" src="${thumbUrl}" alt="preview">
+          <div class="image-details">
+            <div class="image-title" title="${item.file.name}">${item.file.name}</div>
+            <div class="image-meta-info">
+              <span class="meta-tag">Original: ${formatBytes(item.file.size)}</span>
+              ${metaNotice}
+              ${resultSizeHtml}
+            </div>
+          </div>
+          <div>${statusBadgeHtml}</div>
+          <div class="item-actions">
+            ${item.status === 'done' ? `
+              <button class="btn-icon download-one" title="Download Clean Image" onclick="downloadSingle('${item.id}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+            ` : ''}
+            <button class="btn-icon remove-one" title="Remove" onclick="removeItem('${item.id}')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        `;
+        itemsList.appendChild(div);
+      });
+    }
+
+    // Target format and output name
+    function getTargetType(file) {
+      const selected = formatSelect.value;
+      if (selected !== 'original') return selected;
+      if (file.type === 'image/png' || /\.png$/i.test(file.name)) return 'image/png';
+      if (file.type === 'image/webp' || /\.webp$/i.test(file.name)) return 'image/webp';
+      return 'image/jpeg';
+    }
+
+    function getTargetName(originalName, targetType) {
+      const suffix = suffixInput.value;
+      const base = originalName.replace(/\.[^.]+$/, '');
+      let ext = 'jpg';
+      if (targetType === 'image/png') ext = 'png';
+      else if (targetType === 'image/webp') ext = 'webp';
+      else if (targetType === 'image/avif') ext = 'avif';
+      return `${base}${suffix}.${ext}`;
+    }
+
+    // Clean one image via HTML5 Canvas
+    function cleanSingleImage(fileItem) {
+      return new Promise((resolve, reject) => {
+        const file = fileItem.file;
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            const ctx = canvas.getContext('2d', { alpha: true });
+            if (!ctx) return reject(new Error('Canvas 2D unavailable'));
+
+            // Draw purely raw pixel data (drops all EXIF, GPS, camera and proprietary APP markers)
+            ctx.drawImage(img, 0, 0);
+
+            const targetType = getTargetType(file);
+            const qualityNum = parseInt(qualityRange.value, 10) / 100;
+            const qualityParam = targetType === 'image/png' ? undefined : qualityNum;
+
+            canvas.toBlob(blob => {
+              if (!blob) return reject(new Error('Image encoding failed'));
+              resolve({
+                blob,
+                type: targetType,
+                size: blob.size,
+                name: getTargetName(file.name, targetType)
+              });
+            }, targetType, qualityParam);
+          } catch (e) {
+            reject(e);
+          }
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Image decoding failed'));
+        };
+
+        img.src = url;
+      });
+    }
+
+    // Clean all images
+    async function cleanAll() {
+      if (!fileItems.length) return;
+
+      $('btnCleanAll').disabled = true;
+      $('btnDownloadZip').disabled = true;
+      $('btnClearAll').disabled = true;
+
+      const progressBar = $('progressBar');
+      const progressText = $('progressText');
+      const progressPct = $('progressPct');
+      progressBar.classList.add('active');
+
+      let completed = 0;
+      for (let i = 0; i < fileItems.length; i++) {
+        const item = fileItems[i];
+        item.status = 'cleaning';
+        renderItemStatus(item);
+
+        try {
+          const res = await cleanSingleImage(item);
+          item.status = 'done';
+          item.resultBlob = res.blob;
+          item.resultName = res.name;
+          item.resultSize = res.size;
+        } catch (err) {
+          item.status = 'error';
+          item.errorMsg = err.message;
+        }
+
+        completed++;
+        const pct = Math.round((completed / fileItems.length) * 100);
+        progressBar.style.width = pct + '%';
+        progressPct.textContent = pct + '%';
+        progressText.textContent = `Cleaning ${completed} of ${fileItems.length} images...`;
+      }
+
+      progressBar.classList.remove('active');
+      $('btnCleanAll').disabled = false;
+      $('btnClearAll').disabled = false;
+      
+      const successCount = fileItems.filter(x => x.status === 'done').length;
+      progressText.textContent = `Completed! ${successCount} cleaned successfully.`;
+      renderUI();
+      showToast(`Finished cleaning ${successCount} image(s)!`);
+    }
+
+    function renderItemStatus(item) {
+      const el = $('item_' + item.id);
+      if (el) {
+        const badge = el.querySelector('.status-badge');
+        if (badge) {
+          badge.className = 'status-badge status-cleaning';
+          badge.textContent = '✨ Cleaning...';
+        }
+      }
+    }
+
+    // Remove single file
+    window.removeItem = function(id) {
+      fileItems = fileItems.filter(x => x.id !== id);
+      renderUI();
+    };
+
+    // Download single cleaned file
+    window.downloadSingle = function(id) {
+      const item = fileItems.find(x => x.id === id);
+      if (!item || !item.resultBlob) return;
+      const url = URL.createObjectURL(item.resultBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = item.resultName || 'cleaned_image.jpg';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    // Lightweight Standalone ZIP Builder
+    const crcTable = (() => {
+      const t = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+        t[n] = c >>> 0;
+      }
+      return t;
+    })();
+
+    function crc32(bytes) {
+      let c = 0xffffffff;
+      for (let i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 255] ^ (c >>> 8);
+      return (c ^ 0xffffffff) >>> 0;
+    }
+
+    function u16(a, p, v) { a[p] = v & 255; a[p + 1] = (v >>> 8) & 255; }
+    function u32(a, p, v) {
+      a[p] = v & 255; a[p + 1] = (v >>> 8) & 255;
+      a[p + 2] = (v >>> 16) & 255; a[p + 3] = (v >>> 24) & 255;
+    }
+    function concatBuffers(parts) {
+      const n = parts.reduce((s, a) => s + a.length, 0);
+      const out = new Uint8Array(n);
+      let p = 0;
+      for (const a of parts) { out.set(a, p); p += a.length; }
+      return out;
+    }
+    function dosDateTime() {
+      const d = new Date();
+      return {
+        time: (d.getHours() << 11) | (d.getMinutes() << 5) | Math.floor(d.getSeconds() / 2),
+        date: ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()
+      };
+    }
+
+    async function buildZipBlob(items) {
+      const enc = new TextEncoder(), local = [], central = [];
+      let offset = 0;
+      const td = dosDateTime();
+
+      for (const item of items) {
+        const data = new Uint8Array(await item.resultBlob.arrayBuffer());
+        const name = enc.encode(item.resultName);
+        const crc = crc32(data);
+
+        const lh = new Uint8Array(30 + name.length);
+        u32(lh, 0, 0x04034b50);
+        u16(lh, 4, 20); u16(lh, 6, 0); u16(lh, 8, 0);
+        u16(lh, 10, td.time); u16(lh, 12, td.date);
+        u32(lh, 14, crc); u32(lh, 18, data.length); u32(lh, 22, data.length);
+        u16(lh, 26, name.length); u16(lh, 28, 0);
+        lh.set(name, 30);
+        local.push(lh, data);
+
+        const ch = new Uint8Array(46 + name.length);
+        u32(ch, 0, 0x02014b50);
+        u16(ch, 4, 20); u16(ch, 6, 20); u16(ch, 8, 0); u16(ch, 10, 0);
+        u16(ch, 12, td.time); u16(ch, 14, td.date);
+        u32(ch, 16, crc); u32(ch, 20, data.length); u32(ch, 24, data.length);
+        u16(ch, 28, name.length); u16(ch, 30, 0); u16(ch, 32, 0);
+        u16(ch, 34, 0); u16(ch, 36, 0); u32(ch, 38, 0);
+        u32(ch, 42, offset);
+        ch.set(name, 46);
+        central.push(ch);
+
+        offset += lh.length + data.length;
+      }
+
+      const cd = concatBuffers(central);
+      const body = concatBuffers(local);
+      const end = new Uint8Array(22);
+      u32(end, 0, 0x06054b50);
+      u16(end, 4, 0); u16(end, 6, 0);
+      u16(end, 8, items.length); u16(end, 10, items.length);
+      u32(end, 12, cd.length); u32(end, 16, body.length);
+      u16(end, 20, 0);
+
+      return new Blob([body, cd, end], { type: 'application/zip' });
+    }
+
+    async function downloadAllAsZip() {
+      const ready = fileItems.filter(x => x.status === 'done' && x.resultBlob);
+      if (!ready.length) return;
+
+      $('btnDownloadZip').disabled = true;
+      $('progressText').textContent = 'Generating ZIP bundle...';
+      try {
+        const zipBlob = await buildZipBlob(ready);
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'metaclean_sanitized_images.zip';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('ZIP downloaded successfully!');
+      } catch (err) {
+        showToast('ZIP error: ' + err.message);
+      } finally {
+        $('btnDownloadZip').disabled = false;
+      }
+    }
+
+    // Generate Demo Sample Images so user can test immediately
+    function generateDemoImages() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext('2d');
+
+      // Demo Image 1
+      const grad1 = ctx.createLinearGradient(0, 0, 640, 480);
+      grad1.addColorStop(0, '#4338ca');
+      grad1.addColorStop(1, '#06b6d4');
+      ctx.fillStyle = grad1;
+      ctx.fillRect(0, 0, 640, 480);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 32px sans-serif';
+      ctx.fillText('Sample Camera Photo', 40, 200);
+      ctx.font = '20px sans-serif';
+      ctx.fillText('Simulated EXIF & GPS Coordinates', 40, 240);
+
+      canvas.toBlob(b1 => {
+        const f1 = new File([b1], 'Sample_Camera_Photo_GPS.jpg', { type: 'image/jpeg' });
+        // Demo Image 2
+        const grad2 = ctx.createLinearGradient(0, 0, 640, 480);
+        grad2.addColorStop(0, '#be185d');
+        grad2.addColorStop(1, '#f59e0b');
+        ctx.fillStyle = grad2;
+        ctx.fillRect(0, 0, 640, 480);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.fillText('Product Mockup', 40, 200);
+        ctx.font = '20px sans-serif';
+        ctx.fillText('Color profile & Device details', 40, 240);
+
+        canvas.toBlob(b2 => {
+          const f2 = new File([b2], 'Product_Mockup_EXIF.png', { type: 'image/png' });
+          addFiles([f1, f2]);
+        }, 'image/png');
+      }, 'image/jpeg', 0.9);
+    }
+
+    // Event Listeners
+    $('btnBrowse').addEventListener('click', () => fileInput.click());
+    $('btnAddMore').addEventListener('click', () => fileInput.click());
+    $('btnSample').addEventListener('click', generateDemoImages);
+    $('btnCleanAll').addEventListener('click', cleanAll);
+    $('btnDownloadZip').addEventListener('click', downloadAllAsZip);
+    $('btnClearAll').addEventListener('click', () => {
+      fileItems = [];
+      fileInput.value = '';
+      renderUI();
+      showToast('Workspace cleared');
+    });
+
+    fileInput.addEventListener('change', e => {
+      if (e.target.files && e.target.files.length) {
+        addFiles(e.target.files);
+      }
+    });
+
+    // Drag and Drop
+    ['dragenter', 'dragover'].forEach(name => {
+      dropzone.addEventListener(name, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('drag-active');
+      });
+    });
+
+    ['dragleave', 'dragend'].forEach(name => {
+      dropzone.addEventListener(name, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('drag-active');
+      });
+    });
+
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove('drag-active');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        addFiles(e.dataTransfer.files);
+      }
+    });
+
+    // Paste Support (Ctrl+V)
+    window.addEventListener('paste', e => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      const pastedFiles = [];
+      for (const item of items) {
+        if (item.kind === 'file' && item.type.startsWith('image/')) {
+          pastedFiles.push(item.getAsFile());
+        }
+      }
+      if (pastedFiles.length) {
+        addFiles(pastedFiles);
+      }
+    });
+
+    // Initial render
+    renderUI();
+  </script>
+</body>
+</html>
