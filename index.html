@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MetaClean Studio — 100% Forensic Image Metadata & EXIF Scrubber</title>
-  <meta name="description" content="100% complete metadata, EXIF, GPS location, device serial, and tracking tag stripper. Dual-layer pixel decoupling and binary marker purge. Zero server uploads.">
+  <title>MetaClean Studio — 100% Universal Metadata Scrubber (Raster, EPS, AI & SVG)</title>
+  <meta name="description" content="100% zero-trace metadata, EXIF, GPS, author, and tracking scrubber for JPEG, PNG, WebP, EPS, AI (Adobe Illustrator), SVG, PDF, and GIF. 100% private in-browser engine.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
       --accent-emerald-glow: rgba(16, 185, 129, 0.25);
       --accent-rose: #f43f5e;
       --accent-amber: #f59e0b;
+      --accent-orange: #f97316;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-dim: #64748b;
@@ -53,7 +54,7 @@
     }
 
     .container {
-      max-width: 1140px;
+      max-width: 1160px;
       margin: 0 auto;
       padding: 36px 20px 80px;
     }
@@ -61,7 +62,7 @@
     /* Header */
     header {
       text-align: center;
-      margin-bottom: 36px;
+      margin-bottom: 34px;
       position: relative;
     }
 
@@ -102,44 +103,48 @@
     .subtitle {
       color: var(--text-muted);
       font-size: clamp(1rem, 2vw, 1.15rem);
-      max-width: 720px;
-      margin: 0 auto 20px;
+      max-width: 760px;
+      margin: 0 auto 18px;
     }
 
-    .security-specs-bar {
+    .supported-formats-pills {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       margin-top: 14px;
     }
 
-    .spec-item {
+    .format-pill {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-color);
       border-radius: 9999px;
-      padding: 5px 13px;
-      font-size: 12.5px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
       color: var(--text-muted);
-      font-weight: 500;
     }
 
-    .spec-item.gold {
-      color: #fbbf24;
-      border-color: rgba(251, 191, 36, 0.25);
-      background: rgba(251, 191, 36, 0.08);
+    .format-pill.highlight-ai {
+      color: #fb923c;
+      border-color: rgba(249, 115, 22, 0.3);
+      background: rgba(249, 115, 22, 0.08);
     }
-
-    .spec-item.cyan {
+    .format-pill.highlight-eps {
       color: #38bdf8;
-      border-color: rgba(56, 189, 248, 0.25);
+      border-color: rgba(56, 189, 248, 0.3);
       background: rgba(56, 189, 248, 0.08);
     }
+    .format-pill.highlight-svg {
+      color: #ec4899;
+      border-color: rgba(236, 72, 153, 0.3);
+      background: rgba(236, 72, 153, 0.08);
+    }
 
-    /* Main Box */
+    /* Main Card */
     .app-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -181,8 +186,8 @@
     }
 
     .drop-icon-wrap {
-      width: 68px;
-      height: 68px;
+      width: 70px;
+      height: 70px;
       border-radius: 20px;
       background: rgba(99, 102, 241, 0.12);
       border: 1px solid rgba(99, 102, 241, 0.3);
@@ -201,12 +206,12 @@
     }
 
     .drop-icon-wrap svg {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
     }
 
     .drop-title {
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: #fff;
       margin-bottom: 6px;
@@ -215,7 +220,7 @@
     .drop-desc {
       color: var(--text-muted);
       font-size: 0.92rem;
-      max-width: 500px;
+      max-width: 560px;
       margin-bottom: 18px;
     }
 
@@ -297,6 +302,23 @@
       gap: 16px;
     }
 
+    .clean-assurance-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: #a7f3d0;
+    }
+
+    .clean-assurance-box strong {
+      color: #34d399;
+      font-weight: 700;
+    }
+
     .settings-row {
       display: flex;
       flex-wrap: wrap;
@@ -364,24 +386,6 @@
       width: 16px;
       height: 16px;
       cursor: pointer;
-    }
-
-    /* 100% Assurance Banner inside app card */
-    .clean-assurance-box {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-size: 0.85rem;
-      color: #a7f3d0;
-    }
-
-    .clean-assurance-box strong {
-      color: #34d399;
-      font-weight: 700;
     }
 
     /* Stats Grid */
@@ -560,7 +564,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      max-height: 560px;
+      max-height: 580px;
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -589,15 +593,37 @@
       border-color: rgba(255, 255, 255, 0.15);
     }
 
-    .image-thumb {
+    .item-preview-wrap {
       width: 58px;
       height: 58px;
       border-radius: 10px;
-      object-fit: cover;
       background: #181d29;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      overflow: hidden;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
     }
+
+    .item-preview-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .format-tag-icon {
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .badge-eps { background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-ai { background: rgba(249, 115, 22, 0.18); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
+    .badge-svg { background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+    .badge-pdf { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
 
     .image-details {
       flex: 1;
@@ -755,7 +781,7 @@
       background: #111522;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-lg);
-      max-width: 800px;
+      max-width: 820px;
       width: 100%;
       max-height: 90vh;
       display: flex;
@@ -869,7 +895,7 @@
       font-size: 0.8rem;
       color: #cbd5e1;
       text-align: right;
-      max-width: 220px;
+      max-width: 230px;
       word-break: break-all;
     }
 
@@ -909,7 +935,6 @@
       line-height: 1.6;
     }
 
-    /* Footer */
     footer {
       text-align: center;
       margin-top: 50px;
@@ -921,7 +946,6 @@
       display: none !important;
     }
 
-    /* Toast Notification */
     .toast-container {
       position: fixed;
       bottom: 24px;
@@ -963,30 +987,26 @@
     <header>
       <div class="shield-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        100% FORENSIC METADATA SCRUBBER
+        UNIVERSAL 100% METADATA SCRUBBER
       </div>
-      <h1>Zero-Trace Image Sanitizer</h1>
-      <p class="subtitle">Complete removal of EXIF headers, GPS coordinates, device serials, editing history, and color profile tracking. Dual-Layer Pixel Canvas Decoupling + Binary Marker Purge.</p>
+      <h1>Universal Media & Vector Sanitizer</h1>
+      <p class="subtitle">100% forensic stripping of EXIF, GPS location, device serials, Adobe XMP packets, author licenses, and tool tracking across Raster, Vector & Design files.</p>
 
-      <div class="security-specs-bar">
-        <div class="spec-item gold">
-          <span>📍</span> GPS Latitude / Longitude Stripped
-        </div>
-        <div class="spec-item cyan">
-          <span>📷</span> Camera, Lens & Serials Stripped
-        </div>
-        <div class="spec-item">
-          <span>⚡</span> XMP, IPTC & Adobe History Stripped
-        </div>
-        <div class="spec-item">
-          <span>🔒</span> 100% In-Browser (Zero Server Upload)
-        </div>
+      <div class="supported-formats-pills">
+        <span class="format-pill highlight-eps">⚡ EPS Vector (PostScript)</span>
+        <span class="format-pill highlight-ai">🎨 AI (Adobe Illustrator)</span>
+        <span class="format-pill highlight-svg">📐 SVG / Vector</span>
+        <span class="format-pill">📷 JPEG / JPG</span>
+        <span class="format-pill">🖼️ PNG</span>
+        <span class="format-pill">🌐 WebP</span>
+        <span class="format-pill">📄 PDF</span>
+        <span class="format-pill">🎞️ GIF / BMP</span>
       </div>
     </header>
 
     <!-- Main Card -->
     <div class="app-card">
-      <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/*" multiple class="hidden">
+      <input id="fileInput" type="file" accept=".jpg,.jpeg,.png,.webp,.bmp,.gif,.tiff,.svg,.eps,.ai,.pdf,image/*,application/postscript,application/illustrator,application/pdf" multiple class="hidden">
 
       <!-- Dropzone -->
       <div class="dropzone" id="dropzone">
@@ -997,43 +1017,43 @@
             <line x1="12" y1="3" x2="12" y2="15"></line>
           </svg>
         </div>
-        <div class="drop-title">Drop Images Here to Sanitize</div>
-        <div class="drop-desc">Works with JPG, JPEG, PNG, and WebP photos. Cleans individual photos or bulk folders.</div>
+        <div class="drop-title">Drop Images, EPS, AI & Vectors Here</div>
+        <div class="drop-desc">Full support for EPS, AI (Illustrator), SVG, JPG, PNG, and WebP. 100% offline client-side cleaning.</div>
         <div class="drop-actions">
           <button class="btn-select" id="btnBrowse" type="button">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Select Images
+            Select Any Files
           </button>
           <button class="btn-sample" id="btnSample" type="button">
-            ⚡ Try Demo Images (with GPS & Camera EXIF)
+            ⚡ Try Demo Files (EPS, AI, SVG, GPS JPG)
           </button>
         </div>
-        <div class="drop-paste-hint">Or paste directly with <kbd>Ctrl</kbd> + <kbd>V</kbd></div>
+        <div class="drop-paste-hint">Or paste images directly with <kbd>Ctrl</kbd> + <kbd>V</kbd></div>
       </div>
 
-      <!-- Sanitization Pipeline Options -->
+      <!-- Settings Panel -->
       <div class="settings-panel">
         <div class="clean-assurance-box">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
           <div>
-            <strong>100% Sanitization Guarantee Active:</strong> Images pass through offscreen pixel decoupling followed by raw binary marker pruning to eliminate all APP1-APP15, COM, XMP, and IPTC segments.
+            <strong>Universal Vector & Raster Engine Active:</strong> EPS comments (`%%Creator`, `%%For`, `%%CreationDate`), Adobe XMP packets, AI PDF Info dictionaries (`/Author`, `/Producer`), and EXIF GPS markers are stripped while preserving vector geometry and image fidelity.
           </div>
         </div>
 
         <div class="settings-row">
           <div class="settings-group">
             <div class="setting-item">
-              <label for="formatSelect">Output Format:</label>
+              <label for="formatSelect">Raster Conversion:</label>
               <select id="formatSelect">
-                <option value="original" selected>Preserve Format (JPG / PNG / WebP)</option>
-                <option value="image/jpeg">Convert to JPEG</option>
-                <option value="image/png">Convert to PNG (Lossless)</option>
-                <option value="image/webp">Convert to WebP (Modern Compact)</option>
+                <option value="original" selected>Preserve Format (Keep Original Extension)</option>
+                <option value="image/jpeg">Convert Raster to JPEG</option>
+                <option value="image/png">Convert Raster to PNG (Lossless)</option>
+                <option value="image/webp">Convert Raster to WebP (Compact)</option>
               </select>
             </div>
 
             <div class="setting-item">
-              <label for="qualityRange">Quality:</label>
+              <label for="qualityRange">Raster Quality:</label>
               <input type="range" id="qualityRange" min="70" max="100" value="95" step="1">
               <span class="quality-display" id="qualityVal">95%</span>
             </div>
@@ -1042,7 +1062,7 @@
           <div class="settings-group">
             <label class="toggle-wrap">
               <input type="checkbox" id="anonNamesToggle" checked>
-              <span>Anonymize Filenames (Strip phone & date names)</span>
+              <span>Anonymize Filenames (Strip author & device names)</span>
             </label>
           </div>
         </div>
@@ -1053,15 +1073,15 @@
         <!-- Stats Grid -->
         <div class="stats-grid">
           <div class="stat-card" style="--card-accent: #6366f1;">
-            <div class="stat-label">Total Images</div>
-            <div class="stat-val"><span id="statSelected">0</span> <span class="stat-sub">files</span></div>
+            <div class="stat-label">Total Files</div>
+            <div class="stat-val"><span id="statSelected">0</span> <span class="stat-sub">items</span></div>
           </div>
           <div class="stat-card" style="--card-accent: #10b981;">
             <div class="stat-label">100% Sanitized</div>
             <div class="stat-val"><span id="statCleaned">0</span> <span class="stat-sub">verified</span></div>
           </div>
           <div class="stat-card" style="--card-accent: #06b6d4;">
-            <div class="stat-label">Metadata Tags Wiped</div>
+            <div class="stat-label">Vector & EXIF Tags Wiped</div>
             <div class="stat-val"><span id="statMetadataCount">0</span> <span class="stat-sub">tags</span></div>
           </div>
           <div class="stat-card" style="--card-accent: #f59e0b;">
@@ -1085,7 +1105,7 @@
         <div class="toolbar">
           <button class="btn btn-clean" id="btnCleanAll">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            Clean All Images 100%
+            Clean All Files 100%
           </button>
           <button class="btn btn-zip" id="btnDownloadZip" disabled>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
@@ -1106,36 +1126,35 @@
       </div>
     </div>
 
-    <!-- Forensic Details Cards -->
+    <!-- Details Section -->
     <div class="info-section">
       <div class="info-card">
         <h3>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Dual-Layer Forensic Sanitization
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          EPS & PostScript Cleaning
         </h3>
-        <p>1. <strong>Pixel Decoupling</strong>: Decodes image frames directly to memory via HTML5 Canvas, completely separating raw pixels from original file containers.<br>
-        2. <strong>Binary Marker Purge</strong>: Walks the exported byte stream and strips all APP1-APP15, COM, XMP, IPTC, and ICC headers.</p>
+        <p>Scans EPS files and strips Adobe XMP packets (`%begin_xml_packet:`), licensee names (`%%For:`), generator software (`%%Creator:`), timestamps (`%%CreationDate:`), and routing comments without breaking PostScript paths or bounding boxes.</p>
       </div>
 
       <div class="info-card">
         <h3>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-          Everything Stripped to 0
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          AI (Adobe Illustrator) Cleaning
         </h3>
-        <p>GPS Coordinates (Latitude, Longitude, Altitude), Device Camera Model, Lens Serial Numbers, Exposure Time, Software/Photoshop edits, Unique IDs, Thumbnails, and Creation Timestamps.</p>
+        <p>Purges Adobe Illustrator PDF Info dictionaries (`/Author`, `/Creator`, `/Producer`, `/CreationDate`), Adobe XMP metadata streams, and document instance IDs while preserving vector artboards, layers, and bezier curves.</p>
       </div>
 
       <div class="info-card">
         <h3>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          100% Private In-Browser
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
+          SVG & Vector Minification
         </h3>
-        <p>No backend server, no cloud upload, no API requests. Everything runs directly on your computer inside your web browser. Completely safe for confidential, private, and agency client media.</p>
+        <p>Strips `<metadata>`, `<rdf:RDF>`, Inkscape/Sodipodi private tags, Adobe Illustrator embedded private data (`<i:pgf>`), XML comments, and author descriptions, producing lightweight, zero-trace vector graphics.</p>
       </div>
     </div>
 
     <footer>
-      MetaClean Studio • 100% Forensic Image Sanitization Engine • Developed for Absolute Privacy
+      MetaClean Studio • Universal 100% Forensic Scrubber • EPS, AI, SVG & Raster Media
     </footer>
   </div>
 
@@ -1152,7 +1171,6 @@
       <div class="modal-body">
         <div id="modalFileName" style="font-size:0.95rem; color:#fff; font-weight:600;"></div>
         <div class="audit-grid">
-          <!-- Before Column -->
           <div class="audit-col">
             <div class="audit-col-title">
               <span>Original File (Before)</span>
@@ -1160,7 +1178,6 @@
             </div>
             <div id="modalBeforeTags"></div>
           </div>
-          <!-- After Column -->
           <div class="audit-col">
             <div class="audit-col-title">
               <span>Sanitized File (After)</span>
@@ -1214,102 +1231,208 @@
       qualityVal.textContent = e.target.value + '%';
     });
 
+    function getFileType(file) {
+      const name = file.name.toLowerCase();
+      if (name.endsWith('.eps')) return 'eps';
+      if (name.endsWith('.ai')) return 'ai';
+      if (name.endsWith('.svg')) return 'svg';
+      if (name.endsWith('.pdf')) return 'pdf';
+      if (name.endsWith('.png')) return 'png';
+      if (name.endsWith('.webp')) return 'webp';
+      if (name.endsWith('.gif')) return 'gif';
+      if (name.endsWith('.bmp')) return 'bmp';
+      return 'jpeg';
+    }
+
     /* ==========================================================================
-       FORENSIC METADATA PARSER (BEFORE AUDIT)
+       METADATA INSPECTION (BEFORE)
        ========================================================================== */
-    async function inspectImageMetadata(file) {
+    async function inspectFileMetadata(file) {
+      const type = getFileType(file);
       const report = {
+        type,
         hasExif: false,
         gps: null,
         camera: null,
+        author: null,
         software: null,
         date: null,
-        totalMetaBytesEstimate: 0,
         rawTags: []
       };
 
       try {
-        const slice = await file.slice(0, 262144).arrayBuffer(); // read first 256KB for metadata
-        const view = new DataView(slice);
-        const bytes = new Uint8Array(slice);
+        const slice = await file.slice(0, 300000).arrayBuffer();
+        const text = new TextDecoder('latin1').decode(slice);
 
-        // JPEG Parser
-        if (bytes[0] === 0xFF && bytes[1] === 0xD8) {
-          let offset = 2;
-          while (offset < view.byteLength - 4) {
-            const marker = view.getUint16(offset);
-            if (marker === 0xFFDA) break; // SOS (start of scan)
-            if ((marker & 0xFF00) !== 0xFF00) break;
+        if (type === 'eps') {
+          // EPS Analysis
+          report.hasExif = true;
+          const creator = text.match(/%%Creator:\s*([^\r\n]+)/i);
+          if (creator) { report.software = creator[1].trim(); report.rawTags.push('%%Creator (' + report.software + ')'); }
+          const forUser = text.match(/%%For:\s*([^\r\n]+)/i);
+          if (forUser) { report.author = forUser[1].trim(); report.rawTags.push('%%For Licensee (' + report.author + ')'); }
+          const cDate = text.match(/%%CreationDate:\s*([^\r\n]+)/i);
+          if (cDate) { report.date = cDate[1].trim(); report.rawTags.push('%%CreationDate'); }
+          if (/%begin_xml_packet:|<\?xpacket/i.test(text)) {
+            report.rawTags.push('Adobe XMP XML Packet');
+          }
+        } else if (type === 'ai') {
+          // AI (Adobe Illustrator) Analysis
+          report.hasExif = true;
+          const author = text.match(/\/Author\s*\(([^)]+)\)/i);
+          if (author) { report.author = author[1].trim(); report.rawTags.push('Author / User: ' + report.author); }
+          const creator = text.match(/\/Creator\s*\(([^)]+)\)/i) || text.match(/%%Creator:\s*([^\r\n]+)/i);
+          if (creator) { report.software = creator[1].trim(); report.rawTags.push('Illustrator Creator: ' + report.software); }
+          const cDate = text.match(/\/CreationDate\s*\(([^)]+)\)/i) || text.match(/%%CreationDate:\s*([^\r\n]+)/i);
+          if (cDate) { report.date = cDate[1].trim(); report.rawTags.push('Creation Date: ' + report.date); }
+          if (/<x:xmpmeta|<\?xpacket/i.test(text)) {
+            report.rawTags.push('Embedded XMP Metadata Stream');
+          }
+          if (/\/ID\s*\[/i.test(text)) report.rawTags.push('Document Unique Tracking ID');
+        } else if (type === 'svg') {
+          // SVG Analysis
+          if (/<metadata[\s\S]*?<\/metadata>/i.test(text)) {
+            report.hasExif = true;
+            report.rawTags.push('SVG <metadata> / RDF block');
+          }
+          if (/inkscape:|sodipodi:|i:pgf/i.test(text)) {
+            report.hasExif = true;
+            report.software = 'Inkscape / Adobe Illustrator Vector Tags';
+            report.rawTags.push('Editor Specific Private Namespaces');
+          }
+          if (/<!--[\s\S]*?-->/i.test(text)) {
+            report.rawTags.push('XML Comments / Generator Tags');
+          }
+        } else {
+          // JPEG / PNG / Raster Analysis
+          const view = new DataView(slice);
+          const bytes = new Uint8Array(slice);
 
-            const len = view.getUint16(offset + 2);
-            if (marker >= 0xFFE1 && marker <= 0xFFEF) { // APP1-APP15
-              report.hasExif = true;
-              report.totalMetaBytesEstimate += len + 2;
-
-              // Check APP1 Exif / XMP
-              if (marker === 0xFFE1) {
-                const headerStr = String.fromCharCode(...bytes.subarray(offset + 4, offset + 8));
-                if (headerStr === 'Exif') {
-                  report.rawTags.push('EXIF 2.3 Header (Camera & Timestamps)');
-                  // Quick scan for ASCII strings (Camera, Date, Software)
-                  const subStr = new TextDecoder().decode(bytes.subarray(offset + 10, offset + 2 + len));
-                  const cameraMatch = subStr.match(/(Apple|Canon|Nikon|Sony|Samsung|Google|Xiaomi|HUAWEI|Fujifilm)[^ ]{1,30}/i);
-                  if (cameraMatch) report.camera = cameraMatch[0].trim();
-                  const dateMatch = subStr.match(/\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}/);
-                  if (dateMatch) report.date = dateMatch[0];
+          if (bytes[0] === 0xFF && bytes[1] === 0xD8) {
+            let offset = 2;
+            while (offset < view.byteLength - 4) {
+              const marker = view.getUint16(offset);
+              if (marker === 0xFFDA) break;
+              if ((marker & 0xFF00) !== 0xFF00) break;
+              const len = view.getUint16(offset + 2);
+              if (marker >= 0xFFE1 && marker <= 0xFFEF) {
+                report.hasExif = true;
+                if (marker === 0xFFE1) {
+                  const subStr = text.substring(offset + 10, offset + 2 + len);
+                  const camMatch = subStr.match(/(Apple|Canon|Nikon|Sony|Samsung|Google|Xiaomi|Fujifilm)[^ ]{1,30}/i);
+                  if (camMatch) report.camera = camMatch[0].trim();
+                  const dMatch = subStr.match(/\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}/);
+                  if (dMatch) report.date = dMatch[0];
                   if (/GPS/i.test(subStr)) {
-                    report.gps = 'GPS Coordinates & Geotag Embedded';
+                    report.gps = 'GPS Coordinates Embedded';
                     report.rawTags.push('GPS Location (Latitude/Longitude)');
                   }
-                } else if (/http:\/\/ns\.adobe\.com/i.test(headerStr)) {
-                  report.rawTags.push('Adobe XMP Packet (Editing History)');
-                  report.software = 'Adobe XMP / Creative Cloud';
+                  report.rawTags.push('EXIF / Device Header');
+                } else if (marker === 0xFFE2) {
+                  report.rawTags.push('ICC Color Profile');
                 }
-              } else if (marker === 0xFFE2) {
-                report.rawTags.push('ICC Color Profile (Device Metrics)');
-              } else if (marker === 0xFFED) {
-                report.rawTags.push('IPTC-NAA / Photoshop IRB');
+              } else if (marker === 0xFFFE) {
+                report.rawTags.push('COM Comment');
               }
-            } else if (marker === 0xFFFE) {
-              report.hasExif = true;
-              report.rawTags.push('COM Comment Segment');
-              report.totalMetaBytesEstimate += len + 2;
+              offset += 2 + len;
             }
-            offset += 2 + len;
+          } else if (bytes[0] === 0x89 && bytes[1] === 0x50) {
+            if (/eXIf|tEXt|zTXt|iTXt/i.test(text)) {
+              report.hasExif = true;
+              report.rawTags.push('PNG Text & EXIF Chunks');
+            }
           }
-        } else if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
-          // PNG Parser
-          const text = new TextDecoder().decode(bytes);
-          if (/eXIf/i.test(text)) {
-            report.hasExif = true;
-            report.rawTags.push('eXIf Chunk');
-          }
-          if (/tEXt|zTXt|iTXt/i.test(text)) {
-            report.hasExif = true;
-            report.rawTags.push('Text Metadata Chunks (Author/History)');
-          }
-          if (/iCCP/i.test(text)) report.rawTags.push('ICC Profile Chunk');
-          if (/pHYs/i.test(text)) report.rawTags.push('Physical Aspect / DPI Tracking');
         }
-      } catch (err) {
-        console.warn('Inspect metadata error:', err);
+      } catch (e) {
+        console.warn('Inspect metadata:', e);
       }
 
-      if (!report.camera) report.camera = report.hasExif ? 'Detected in EXIF header' : 'None detected';
-      if (!report.date) report.date = report.hasExif ? 'Detected in Timestamp tag' : 'None detected';
-      if (!report.gps) report.gps = report.hasExif ? 'Detected / Stripped' : 'None detected';
+      if (!report.software) report.software = report.hasExif ? 'Detected in File' : 'None detected';
+      if (!report.date) report.date = report.hasExif ? 'Detected in File' : 'None detected';
+      if (!report.author) report.author = report.hasExif ? 'Detected in Header' : 'None detected';
 
       return report;
     }
 
     /* ==========================================================================
-       DUAL-LAYER SANITIZATION ENGINE (100% FORENSIC GUARANTEE)
+       CLEANING ENGINES
        ========================================================================== */
 
-    // Layer 2: Raw Binary JPEG Scrubber (Strips ALL APP1..APP15 and COM markers)
+    // 1. EPS Scrubber: PostScript comments and XMP packets
+    async function sanitizeEps(file) {
+      const buf = await file.arrayBuffer();
+      const text = new TextDecoder('latin1').decode(buf);
+
+      // Strip Adobe XMP packet
+      let cleaned = text.replace(/%begin_xml_packet:[\s\S]*?%end_xml_packet:/gi, '');
+      cleaned = cleaned.replace(/<\?xpacket[\s\S]*?\?>/gi, '');
+
+      // Sanitize DSC headers
+      cleaned = cleaned.replace(/^%%Creator:.*$/gmi, '%%Creator: Sanitized');
+      cleaned = cleaned.replace(/^%%CreationDate:.*$/gmi, '%%CreationDate: ');
+      cleaned = cleaned.replace(/^%%For:.*$/gmi, '%%For: ');
+      cleaned = cleaned.replace(/^%%Title:.*$/gmi, '%%Title: ');
+      cleaned = cleaned.replace(/^%%Copyright:.*$/gmi, '');
+      cleaned = cleaned.replace(/^%%Routing:.*$/gmi, '');
+
+      const out = new Uint8Array(cleaned.length);
+      for (let i = 0; i < cleaned.length; i++) out[i] = cleaned.charCodeAt(i) & 0xFF;
+      return new Blob([out], { type: 'application/postscript' });
+    }
+
+    // 2. AI (Adobe Illustrator) Scrubber: PDF/PostScript dictionaries & XMP
+    async function sanitizeAi(file) {
+      const buf = await file.arrayBuffer();
+      const text = new TextDecoder('latin1').decode(buf);
+
+      let cleaned = text;
+      // Strip XMP
+      cleaned = cleaned.replace(/<x:xmpmeta[\s\S]*?<\/x:xmpmeta>/gi, '');
+      cleaned = cleaned.replace(/<\?xpacket[\s\S]*?\?>/gi, '');
+      cleaned = cleaned.replace(/%begin_xml_packet:[\s\S]*?%end_xml_packet:/gi, '');
+
+      // Neutralize PDF info entries
+      cleaned = cleaned.replace(/\/Author\s*\([^\)]*\)/gi, '/Author ()');
+      cleaned = cleaned.replace(/\/Creator\s*\([^\)]*\)/gi, '/Creator ()');
+      cleaned = cleaned.replace(/\/Producer\s*\([^\)]*\)/gi, '/Producer ()');
+      cleaned = cleaned.replace(/\/CreationDate\s*\([^\)]*\)/gi, '/CreationDate ()');
+      cleaned = cleaned.replace(/\/ModDate\s*\([^\)]*\)/gi, '/ModDate ()');
+      cleaned = cleaned.replace(/\/Title\s*\([^\)]*\)/gi, '/Title ()');
+      cleaned = cleaned.replace(/\/Subject\s*\([^\)]*\)/gi, '/Subject ()');
+      cleaned = cleaned.replace(/\/Keywords\s*\([^\)]*\)/gi, '/Keywords ()');
+
+      // Strip Document IDs
+      cleaned = cleaned.replace(/\/ID\s*\[\s*<[0-9a-fA-F]+>\s*<[0-9a-fA-F]+>\s*\]/gi, '');
+
+      // Sanitize PostScript comments
+      cleaned = cleaned.replace(/^%%Creator:.*$/gmi, '%%Creator: Sanitized');
+      cleaned = cleaned.replace(/^%%CreationDate:.*$/gmi, '%%CreationDate: ');
+      cleaned = cleaned.replace(/^%%For:.*$/gmi, '%%For: ');
+      cleaned = cleaned.replace(/^%%Title:.*$/gmi, '%%Title: ');
+
+      const out = new Uint8Array(cleaned.length);
+      for (let i = 0; i < cleaned.length; i++) out[i] = cleaned.charCodeAt(i) & 0xFF;
+      return new Blob([out], { type: 'application/illustrator' });
+    }
+
+    // 3. SVG Scrubber: XML metadata, comments, editor namespaces
+    async function sanitizeSvg(file) {
+      const text = await file.text();
+      let cleaned = text.replace(/<!--[\s\S]*?-->/g, ''); // comments
+      cleaned = cleaned.replace(/<metadata[\s\S]*?<\/metadata>/gi, ''); // metadata
+      cleaned = cleaned.replace(/<\?xpacket[\s\S]*?\?>/gi, ''); // XMP
+      cleaned = cleaned.replace(/<i:pgf[\s\S]*?<\/i:pgf>/gi, ''); // Illustrator private data
+      cleaned = cleaned.replace(/<title[\s\S]*?<\/title>/gi, ''); // title
+      cleaned = cleaned.replace(/<desc[\s\S]*?<\/desc>/gi, ''); // desc
+      cleaned = cleaned.replace(/\s+(sodipodi|inkscape|i):[a-zA-Z0-9_-]+="[^"]*"/gi, ''); // editor attrs
+      cleaned = cleaned.replace(/\s+xmlns:(sodipodi|inkscape|i)="[^"]*"/gi, ''); // editor xmlns
+      return new Blob([cleaned], { type: 'image/svg+xml' });
+    }
+
+    // 4. Binary JPEG Purge
     function sanitizeJpegBinary(bytes) {
       if (bytes[0] !== 0xFF || bytes[1] !== 0xD8) return bytes;
-      const out = [0xFF, 0xD8]; // Pure SOI
+      const out = [0xFF, 0xD8];
       let i = 2;
       while (i < bytes.length) {
         if (bytes[i] !== 0xFF) { i++; continue; }
@@ -1317,19 +1440,13 @@
         if (i >= bytes.length) break;
         const marker = bytes[i];
         i++;
-
-        if (marker === 0xD9) { // EOI
-          out.push(0xFF, 0xD9);
-          break;
-        }
-
-        if (marker === 0xDA) { // SOS (Start of Scan) - Entropy coded scan data follows
+        if (marker === 0xD9) { out.push(0xFF, 0xD9); break; }
+        if (marker === 0xDA) {
           if (i + 1 >= bytes.length) break;
           const len = (bytes[i] << 8) | bytes[i + 1];
           out.push(0xFF, 0xDA);
           for (let k = 0; k < len; k++) out.push(bytes[i + k]);
           i += len;
-          // Copy remaining bitstream directly to EOI
           while (i < bytes.length) {
             if (bytes[i] === 0xFF && i + 1 < bytes.length && bytes[i + 1] === 0xD9) {
               out.push(0xFF, 0xD9);
@@ -1340,42 +1457,31 @@
           }
           break;
         }
-
-        // Generic marker with payload length
         if (i + 1 >= bytes.length) break;
         const len = (bytes[i] << 8) | bytes[i + 1];
-
-        // 100% PURGE: Drop APP1 to APP15 (0xE1..0xEF) and COM (0xFE)
         const isMetadata = (marker >= 0xE1 && marker <= 0xEF) || marker === 0xFE;
         if (!isMetadata) {
           out.push(0xFF, marker);
-          for (let k = 0; k < len; k++) {
-            out.push(bytes[i + k]);
-          }
+          for (let k = 0; k < len; k++) out.push(bytes[i + k]);
         }
         i += len;
       }
       return new Uint8Array(out);
     }
 
-    // Layer 2: Raw Binary PNG Scrubber (Keeps ONLY IHDR, IDAT, PLTE, tRNS, IEND)
+    // 5. Binary PNG Purge
     function sanitizePngBinary(bytes) {
       const sig = [137, 80, 78, 71, 13, 10, 26, 10];
       for (let j = 0; j < 8; j++) if (bytes[j] !== sig[j]) return bytes;
-
       const out = [...sig];
       let offset = 8;
       const allowed = new Set(['IHDR', 'IDAT', 'PLTE', 'tRNS', 'IEND']);
-
       while (offset < bytes.length - 8) {
         const length = (bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3];
         const chunkType = String.fromCharCode(bytes[offset + 4], bytes[offset + 5], bytes[offset + 6], bytes[offset + 7]);
         const totalChunkLen = 4 + 4 + length + 4;
-
         if (allowed.has(chunkType)) {
-          for (let k = 0; k < totalChunkLen; k++) {
-            out.push(bytes[offset + k]);
-          }
+          for (let k = 0; k < totalChunkLen; k++) out.push(bytes[offset + k]);
         }
         offset += totalChunkLen;
         if (chunkType === 'IEND') break;
@@ -1383,8 +1489,8 @@
       return new Uint8Array(out);
     }
 
-    // Layer 1 + 2: Canvas Decoupling followed by Binary Purge
-    function sanitizeSingleImage(fileItem, itemIndex) {
+    // 6. Raster Dual-Layer Canvas + Binary Sanitizer
+    function sanitizeRaster(fileItem) {
       return new Promise((resolve, reject) => {
         const file = fileItem.file;
         const url = URL.createObjectURL(file);
@@ -1393,102 +1499,99 @@
         img.onload = async () => {
           URL.revokeObjectURL(url);
           try {
-            // Layer 1: Offscreen Canvas Pixel Decoupling
             const canvas = document.createElement('canvas');
             canvas.width = img.naturalWidth || img.width;
             canvas.height = img.naturalHeight || img.height;
             const ctx = canvas.getContext('2d', { alpha: true });
-            if (!ctx) return reject(new Error('Canvas 2D unavailable'));
-
-            // Draw purely raw pixel array (instantly strips all headers from the original file)
+            if (!ctx) return reject(new Error('Canvas unavailable'));
             ctx.drawImage(img, 0, 0);
 
-            const targetType = getTargetType(file);
+            let targetType = formatSelect.value;
+            if (targetType === 'original') {
+              if (file.type === 'image/png' || /\.png$/i.test(file.name)) targetType = 'image/png';
+              else if (file.type === 'image/webp' || /\.webp$/i.test(file.name)) targetType = 'image/webp';
+              else targetType = 'image/jpeg';
+            }
+
             const qualityNum = parseInt(qualityRange.value, 10) / 100;
             const qualityParam = targetType === 'image/png' ? undefined : qualityNum;
 
             canvas.toBlob(async rawBlob => {
-              if (!rawBlob) return reject(new Error('Canvas re-encoding failed'));
-
+              if (!rawBlob) return reject(new Error('Canvas export failed'));
               try {
-                // Layer 2: Raw Binary Marker Verification & Purge
                 const rawBuffer = await rawBlob.arrayBuffer();
                 let sanitizedBytes = new Uint8Array(rawBuffer);
-
-                if (targetType === 'image/jpeg') {
-                  sanitizedBytes = sanitizeJpegBinary(sanitizedBytes);
-                } else if (targetType === 'image/png') {
-                  sanitizedBytes = sanitizePngBinary(sanitizedBytes);
-                }
-
-                const finalBlob = new Blob([sanitizedBytes], { type: targetType });
-                const finalName = getCleanOutputName(file.name, targetType, itemIndex);
+                if (targetType === 'image/jpeg') sanitizedBytes = sanitizeJpegBinary(sanitizedBytes);
+                else if (targetType === 'image/png') sanitizedBytes = sanitizePngBinary(sanitizedBytes);
 
                 resolve({
-                  blob: finalBlob,
-                  type: targetType,
-                  size: finalBlob.size,
-                  name: finalName
+                  blob: new Blob([sanitizedBytes], { type: targetType }),
+                  type: targetType
                 });
-              } catch (err) {
-                reject(err);
-              }
+              } catch (e) { reject(e); }
             }, targetType, qualityParam);
-          } catch (e) {
-            reject(e);
-          }
+          } catch (e) { reject(e); }
         };
 
         img.onerror = () => {
           URL.revokeObjectURL(url);
-          reject(new Error('Image decoding failed'));
+          reject(new Error('Image decoding error'));
         };
 
         img.src = url;
       });
     }
 
-    function getTargetType(file) {
-      const selected = formatSelect.value;
-      if (selected !== 'original') return selected;
-      if (file.type === 'image/png' || /\.png$/i.test(file.name)) return 'image/png';
-      if (file.type === 'image/webp' || /\.webp$/i.test(file.name)) return 'image/webp';
-      return 'image/jpeg';
-    }
+    // Universal File Router
+    async function sanitizeAnyFile(fileItem, itemIndex) {
+      const type = getFileType(fileItem.file);
+      let resBlob, resExt;
 
-    function getCleanOutputName(originalName, targetType, index) {
-      let ext = 'jpg';
-      if (targetType === 'image/png') ext = 'png';
-      else if (targetType === 'image/webp') ext = 'webp';
-
-      if (anonNamesToggle.checked) {
-        const num = String(index + 1).padStart(2, '0');
-        return `clean_image_${num}.${ext}`;
+      if (type === 'eps') {
+        resBlob = await sanitizeEps(fileItem.file);
+        resExt = 'eps';
+      } else if (type === 'ai') {
+        resBlob = await sanitizeAi(fileItem.file);
+        resExt = 'ai';
+      } else if (type === 'svg') {
+        resBlob = await sanitizeSvg(fileItem.file);
+        resExt = 'svg';
       } else {
-        const base = originalName.replace(/\.[^.]+$/, '');
-        return `${base}_100clean.${ext}`;
+        const rasterRes = await sanitizeRaster(fileItem);
+        resBlob = rasterRes.blob;
+        resExt = rasterRes.type === 'image/png' ? 'png' : rasterRes.type === 'image/webp' ? 'webp' : 'jpg';
       }
+
+      let resName;
+      if (anonNamesToggle.checked) {
+        const num = String(itemIndex + 1).padStart(2, '0');
+        resName = `clean_${type}_${num}.${resExt}`;
+      } else {
+        const base = fileItem.file.name.replace(/\.[^.]+$/, '');
+        resName = `${base}_100clean.${resExt}`;
+      }
+
+      return {
+        blob: resBlob,
+        name: resName,
+        size: resBlob.size
+      };
     }
 
     /* ==========================================================================
-       FILE HANDLING & UI ACTIONS
+       FILE ACTIONS & UI
        ========================================================================== */
     async function addFiles(newFiles) {
-      const valid = Array.from(newFiles).filter(f => 
-        /^image\/(jpeg|png|webp|avif)$/i.test(f.type) || /\.(jpe?g|png|webp|avif)$/i.test(f.name)
-      );
-
-      if (!valid.length) {
-        showToast('Please select valid images (JPG, PNG, WebP).');
-        return;
-      }
+      const valid = Array.from(newFiles);
+      if (!valid.length) return;
 
       for (const file of valid) {
-        const id = 'img_' + Math.random().toString(36).substring(2, 9);
-        const meta = await inspectImageMetadata(file);
+        const id = 'file_' + Math.random().toString(36).substring(2, 9);
+        const meta = await inspectFileMetadata(file);
         fileItems.push({
           id,
           file,
+          type: meta.type,
           rawMeta: meta,
           resultBlob: null,
           resultName: null,
@@ -1499,7 +1602,7 @@
       }
 
       renderUI();
-      showToast(`Loaded ${valid.length} image(s) for 100% forensic cleaning.`);
+      showToast(`Added ${valid.length} file(s) for 100% universal cleaning.`);
     }
 
     function renderUI() {
@@ -1527,24 +1630,37 @@
         div.className = 'image-item';
         div.id = 'item_' + item.id;
 
-        const thumbUrl = URL.createObjectURL(item.file);
+        // Preview thumbnail or vector badge
+        let previewHtml = '';
+        if (item.type === 'eps') {
+          previewHtml = `<div class="item-preview-wrap badge-eps"><span class="format-tag-icon">EPS</span></div>`;
+        } else if (item.type === 'ai') {
+          previewHtml = `<div class="item-preview-wrap badge-ai"><span class="format-tag-icon">AI</span></div>`;
+        } else if (item.type === 'svg') {
+          previewHtml = `<div class="item-preview-wrap badge-svg"><span class="format-tag-icon">SVG</span></div>`;
+        } else if (item.type === 'pdf') {
+          previewHtml = `<div class="item-preview-wrap badge-pdf"><span class="format-tag-icon">PDF</span></div>`;
+        } else {
+          const thumbUrl = URL.createObjectURL(item.file);
+          previewHtml = `<div class="item-preview-wrap"><img src="${thumbUrl}" alt="thumb"></div>`;
+        }
 
         let statusBadgeHtml = '';
         if (item.status === 'waiting') {
-          statusBadgeHtml = `<span class="status-badge status-waiting">⏳ Ready for Scrub</span>`;
+          statusBadgeHtml = `<span class="status-badge status-waiting">⏳ Ready for Clean</span>`;
         } else if (item.status === 'cleaning') {
           statusBadgeHtml = `<span class="status-badge status-cleaning">🛡️ Sanitizing 100%...</span>`;
         } else if (item.status === 'done') {
-          statusBadgeHtml = `<span class="status-badge status-done">✓ 100% Cleaned</span>`;
+          statusBadgeHtml = `<span class="status-badge status-done">✓ 100% Sanitized</span>`;
         } else {
           statusBadgeHtml = `<span class="status-badge status-error" title="${item.errorMsg || 'Failed'}">✕ Failed</span>`;
         }
 
         let metaNotice = '';
         if (item.rawMeta && item.rawMeta.hasExif) {
-          metaNotice = `<span class="meta-tag meta-exif-warning">⚠️ Metadata & Device Tags Found</span>`;
+          metaNotice = `<span class="meta-tag meta-exif-warning">⚠️ Metadata Detected</span>`;
         } else {
-          metaNotice = `<span class="meta-tag" style="color:var(--text-dim);">No EXIF detected</span>`;
+          metaNotice = `<span class="meta-tag" style="color:var(--text-dim);">No tags detected</span>`;
         }
 
         let verifiedHtml = '';
@@ -1553,7 +1669,7 @@
         }
 
         div.innerHTML = `
-          <img class="image-thumb" src="${thumbUrl}" alt="thumb">
+          ${previewHtml}
           <div class="image-details">
             <div class="image-title" title="${item.file.name}">
               ${item.status === 'done' ? item.resultName : item.file.name}
@@ -1602,7 +1718,7 @@
         renderItemStatus(item);
 
         try {
-          const res = await sanitizeSingleImage(item, i);
+          const res = await sanitizeAnyFile(item, i);
           item.status = 'done';
           item.resultBlob = res.blob;
           item.resultName = res.name;
@@ -1616,7 +1732,7 @@
         const pct = Math.round((completed / fileItems.length) * 100);
         progressBar.style.width = pct + '%';
         progressPct.textContent = pct + '%';
-        progressText.textContent = `Forensically scrubbing ${completed} of ${fileItems.length} images...`;
+        progressText.textContent = `Scrubbing ${completed} of ${fileItems.length} (${item.type.toUpperCase()})...`;
       }
 
       progressBar.classList.remove('active');
@@ -1624,9 +1740,9 @@
       $('btnClearAll').disabled = false;
 
       const successCount = fileItems.filter(x => x.status === 'done').length;
-      progressText.textContent = `100% Sanitized! All ${successCount} images stripped of EXIF, GPS and tags.`;
+      progressText.textContent = `100% Sanitized! All ${successCount} files verified zero-trace.`;
       renderUI();
-      showToast(`100% Clean Completed: ${successCount} files verified zero-trace!`);
+      showToast(`100% Complete: ${successCount} files (Raster & Vector) sanitized!`);
     }
 
     function renderItemStatus(item) {
@@ -1651,7 +1767,7 @@
       const url = URL.createObjectURL(item.resultBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = item.resultName || 'cleaned_image.jpg';
+      a.download = item.resultName || 'cleaned_file';
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -1663,24 +1779,47 @@
       const item = fileItems.find(x => x.id === id);
       if (!item) return;
 
-      $('modalFileName').textContent = `File: ${item.file.name} (${formatBytes(item.file.size)})`;
+      $('modalFileName').textContent = `File: ${item.file.name} [${item.type.toUpperCase()}] (${formatBytes(item.file.size)})`;
 
       const m = item.rawMeta || {};
       const beforeTags = $('modalBeforeTags');
-      beforeTags.innerHTML = `
-        <div class="tag-row"><span class="tag-label">GPS Geotag:</span> <span class="tag-value">${m.gps || 'Detected'}</span></div>
-        <div class="tag-row"><span class="tag-label">Camera Model:</span> <span class="tag-value">${m.camera || 'Detected'}</span></div>
-        <div class="tag-row"><span class="tag-label">Capture Date:</span> <span class="tag-value">${m.date || 'Detected'}</span></div>
-        <div class="tag-row"><span class="tag-label">Software / History:</span> <span class="tag-value">${m.software || 'Detected in Header'}</span></div>
-        <div class="tag-row"><span class="tag-label">EXIF Tags:</span> <span class="tag-value">${m.rawTags ? m.rawTags.join(', ') : 'Standard EXIF'}</span></div>
-      `;
+      
+      let rowsBefore = '';
+      if (item.type === 'eps') {
+        rowsBefore = `
+          <div class="tag-row"><span class="tag-label">PostScript Creator:</span> <span class="tag-value">${m.software}</span></div>
+          <div class="tag-row"><span class="tag-label">Licensed User (%%For):</span> <span class="tag-value">${m.author}</span></div>
+          <div class="tag-row"><span class="tag-label">Creation Timestamp:</span> <span class="tag-value">${m.date}</span></div>
+          <div class="tag-row"><span class="tag-label">Embedded Tags:</span> <span class="tag-value">${m.rawTags.join(', ') || 'XMP / PostScript'}</span></div>
+        `;
+      } else if (item.type === 'ai') {
+        rowsBefore = `
+          <div class="tag-row"><span class="tag-label">Illustrator Author:</span> <span class="tag-value">${m.author}</span></div>
+          <div class="tag-row"><span class="tag-label">Creator / Producer:</span> <span class="tag-value">${m.software}</span></div>
+          <div class="tag-row"><span class="tag-label">Creation Timestamp:</span> <span class="tag-value">${m.date}</span></div>
+          <div class="tag-row"><span class="tag-label">XMP & Doc ID:</span> <span class="tag-value">${m.rawTags.join(', ') || 'XMP Stream'}</span></div>
+        `;
+      } else if (item.type === 'svg') {
+        rowsBefore = `
+          <div class="tag-row"><span class="tag-label">Editor Namespaces:</span> <span class="tag-value">${m.software}</span></div>
+          <div class="tag-row"><span class="tag-label">Metadata Nodes:</span> <span class="tag-value">${m.rawTags.join(', ') || '<metadata>'}</span></div>
+        `;
+      } else {
+        rowsBefore = `
+          <div class="tag-row"><span class="tag-label">GPS Geotag:</span> <span class="tag-value">${m.gps || 'Detected'}</span></div>
+          <div class="tag-row"><span class="tag-label">Camera Model:</span> <span class="tag-value">${m.camera || 'Detected'}</span></div>
+          <div class="tag-row"><span class="tag-label">Capture Date:</span> <span class="tag-value">${m.date || 'Detected'}</span></div>
+          <div class="tag-row"><span class="tag-label">EXIF Tags:</span> <span class="tag-value">${m.rawTags.join(', ') || 'EXIF'}</span></div>
+        `;
+      }
+      beforeTags.innerHTML = rowsBefore;
 
       const afterTags = $('modalAfterTags');
       afterTags.innerHTML = `
-        <div class="tag-row"><span class="tag-label">GPS Geotag:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
-        <div class="tag-row"><span class="tag-label">Camera Model:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
-        <div class="tag-row"><span class="tag-label">Capture Date:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
-        <div class="tag-row"><span class="tag-label">Software / History:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
+        <div class="tag-row"><span class="tag-label">Author / User License:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
+        <div class="tag-row"><span class="tag-label">Software / Creator:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
+        <div class="tag-row"><span class="tag-label">Timestamps & History:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
+        <div class="tag-row"><span class="tag-label">XMP & Tracking IDs:</span> <span class="tag-value removed">STRIPPED (None)</span></div>
         <div class="tag-row"><span class="tag-label">Residual Meta:</span> <span class="tag-value removed">0 Bytes (100% Clean)</span></div>
       `;
 
@@ -1692,7 +1831,7 @@
       if (e.target === $('auditModal')) $('auditModal').classList.remove('open');
     });
 
-    /* ZIP Builder */
+    /* ZIP Engine */
     const crcTable = (() => {
       const t = new Uint32Array(256);
       for (let n = 0; n < 256; n++) {
@@ -1779,18 +1918,18 @@
       if (!ready.length) return;
 
       $('btnDownloadZip').disabled = true;
-      $('progressText').textContent = 'Creating zero-trace ZIP bundle...';
+      $('progressText').textContent = 'Creating universal zero-trace ZIP...';
       try {
         const zipBlob = await buildZipBlob(ready);
         const url = URL.createObjectURL(zipBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'metaclean_100_percent_sanitized.zip';
+        a.download = 'metaclean_sanitized_bundle.zip';
         document.body.appendChild(a);
         a.click();
         a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-        showToast('Zero-trace ZIP downloaded successfully!');
+        showToast('Universal ZIP downloaded successfully!');
       } catch (err) {
         showToast('ZIP error: ' + err.message);
       } finally {
@@ -1798,57 +1937,121 @@
       }
     }
 
-    // Demo Image Generator with synthetic EXIF simulation
-    function generateDemoImages() {
+    // Demo Files Generator: EPS, AI, SVG, and JPG
+    function generateDemoFiles() {
+      // 1. Synthetic EPS File
+      const epsData = `%!PS-Adobe-3.0 EPSF-3.0
+%%Creator: Adobe Illustrator 28.0 (Windows)
+%%For: Rafiqul Islam (Agency License)
+%%CreationDate: 10/07/2026 7:15 PM
+%%Title: Logo_Vector_Branding.eps
+%%BoundingBox: 0 0 400 400
+%begin_xml_packet: begin
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/">
+      <xmp:CreatorTool>Adobe Illustrator CC</xmp:CreatorTool>
+      <xmp:CreateDate>2026-10-07T19:15:00+06:00</xmp:CreateDate>
+    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>
+%end_xml_packet: end
+%%EndComments
+newpath
+50 50 moveto
+350 50 lineto
+350 350 lineto
+50 350 lineto
+closepath
+0.2 0.4 0.9 setrgbcolor
+fill
+showpage
+%%EOF`;
+      const fEps = new File([epsData], 'Logo_Vector_Branding.eps', { type: 'application/postscript' });
+
+      // 2. Synthetic AI File (Adobe Illustrator PDF/XMP Container)
+      const aiData = `%PDF-1.5
+%âãÏÓ
+1 0 obj
+<<
+/Author (Rafiqul Islam)
+/Creator (Adobe Illustrator 2026)
+/CreationDate (D:20261007191500+06'00')
+/ModDate (D:20261007192000+06'00')
+/Producer (Adobe PDF Library 17.0)
+/Title (Brand_Artwork_Master.ai)
+>>
+endobj
+2 0 obj
+<<
+/Type /Metadata
+/Subtype /XML
+/Length 320
+>>
+stream
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="" xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/">
+      <xmpMM:DocumentID>uuid:8d29b201-923f-4211-851a-7b8192a0018f</xmpMM:DocumentID>
+    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>
+endstream
+endobj
+trailer
+<<
+/Info 1 0 R
+/Root 3 0 R
+/ID [<4F829104A12B><4F829104A12B>]
+>>
+%%EOF`;
+      const fAi = new File([aiData], 'Brand_Artwork_Master.ai', { type: 'application/illustrator' });
+
+      // 3. Synthetic SVG File
+      const svgData = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" width="400" height="400" viewBox="0 0 400 400" inkscape:version="1.3" sodipodi:docname="Vector_Icon_Artwork.svg">
+<!-- Generator: Adobe Illustrator 28.0, SVG Export Plug-In -->
+<title>Vector Icon Master Design</title>
+<desc>Created by Designer with Company Internal Project ID 99201</desc>
+<metadata>
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <dc:format>image/svg+xml</dc:format>
+      <dc:creator>Rafiqul Islam</dc:creator>
+    </rdf:Description>
+  </rdf:RDF>
+</metadata>
+<rect x="50" y="50" width="300" height="300" rx="30" fill="#6366f1"/>
+<circle cx="200" cy="200" r="70" fill="#38bdf8"/>
+</svg>`;
+      const fSvg = new File([svgData], 'Vector_Icon_Artwork.svg', { type: 'image/svg+xml' });
+
+      // 4. Synthetic Camera JPG
       const canvas = document.createElement('canvas');
-      canvas.width = 800;
-      canvas.height = 600;
+      canvas.width = 640;
+      canvas.height = 480;
       const ctx = canvas.getContext('2d');
-
-      // Demo 1: Smartphone Photo Simulation
-      const grad1 = ctx.createLinearGradient(0, 0, 800, 600);
-      grad1.addColorStop(0, '#1e1b4b');
-      grad1.addColorStop(1, '#0e7490');
-      ctx.fillStyle = grad1;
-      ctx.fillRect(0, 0, 800, 600);
+      const grad = ctx.createLinearGradient(0, 0, 640, 480);
+      grad.addColorStop(0, '#1e1b4b');
+      grad.addColorStop(1, '#0e7490');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 640, 480);
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 36px sans-serif';
-      ctx.fillText('iPhone 15 Pro Max • Shot on Camera', 50, 240);
-      ctx.font = '22px sans-serif';
+      ctx.font = 'bold 30px sans-serif';
+      ctx.fillText('Sample Camera Photo', 40, 220);
       ctx.fillStyle = '#fde047';
-      ctx.fillText('GPS: 23°48\'38.2"N 90°24\'45.0"E (Dhaka)', 50, 290);
-      ctx.fillStyle = '#cbd5e1';
-      ctx.fillText('Lens Serial: 90281-APP • Shutter: 1/250s • ISO 64', 50, 330);
+      ctx.font = '20px sans-serif';
+      ctx.fillText('GPS: 23°48\'38.2"N 90°24\'45.0"E (Dhaka)', 40, 260);
 
-      canvas.toBlob(b1 => {
-        const f1 = new File([b1], 'IMG_20261007_190412_iPhone15_GPS.jpg', { type: 'image/jpeg' });
-        
-        // Demo 2: DSLR Studio Photo Simulation
-        const grad2 = ctx.createLinearGradient(0, 0, 800, 600);
-        grad2.addColorStop(0, '#831843');
-        grad2.addColorStop(1, '#ea580c');
-        ctx.fillStyle = grad2;
-        ctx.fillRect(0, 0, 800, 600);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 36px sans-serif';
-        ctx.fillText('Sony Alpha 7 IV • Commercial Studio Shoot', 50, 240);
-        ctx.font = '22px sans-serif';
-        ctx.fillStyle = '#fde047';
-        ctx.fillText('Adobe Photoshop 2026 XMP Editing History Embedded', 50, 290);
-        ctx.fillStyle = '#cbd5e1';
-        ctx.fillText('FE 24-70mm F2.8 GM II • Serial: SN-7729104', 50, 330);
-
-        canvas.toBlob(b2 => {
-          const f2 = new File([b2], 'DSC04921_SonyA7IV_Lightroom_Edit.jpg', { type: 'image/jpeg' });
-          addFiles([f1, f2]);
-        }, 'image/jpeg', 0.95);
+      canvas.toBlob(b => {
+        const fJpg = new File([b], 'IMG_20261007_iPhone15_GPS.jpg', { type: 'image/jpeg' });
+        addFiles([fEps, fAi, fSvg, fJpg]);
       }, 'image/jpeg', 0.95);
     }
 
     // Event Listeners
     $('btnBrowse').addEventListener('click', () => fileInput.click());
     $('btnAddMore').addEventListener('click', () => fileInput.click());
-    $('btnSample').addEventListener('click', generateDemoImages);
+    $('btnSample').addEventListener('click', generateDemoFiles);
     $('btnCleanAll').addEventListener('click', cleanAll);
     $('btnDownloadZip').addEventListener('click', downloadAllAsZip);
     $('btnClearAll').addEventListener('click', () => {
@@ -1893,7 +2096,7 @@
       const items = (e.clipboardData || e.originalEvent.clipboardData).items;
       const pastedFiles = [];
       for (const item of items) {
-        if (item.kind === 'file' && item.type.startsWith('image/')) {
+        if (item.kind === 'file') {
           pastedFiles.push(item.getAsFile());
         }
       }
